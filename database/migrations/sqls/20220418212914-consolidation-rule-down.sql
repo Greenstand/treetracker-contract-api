@@ -1,0 +1,1 @@
+DROP TABLE consolidation_rule;
