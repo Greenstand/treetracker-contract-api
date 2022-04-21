@@ -26,6 +26,10 @@ const documentIdParamSchema = Joi.object({
   document_id: Joi.string().uuid(),
 }).unknown(false);
 
+const documentPatchSchema = Joi.object({
+  listed: Joi.boolean(),
+}).unknown(false);
+
 const documentPost = async function (req, res) {
   await documentPostSchema.validateAsync(req.body, {
     abortEarly: false,
@@ -78,8 +82,27 @@ const documentSingleGet = async function (req, res) {
   res.send(document);
 };
 
+const documentPatch = async function (req, res) {
+  await documentPatchSchema.validateAsync(req.body, {
+    abortEarly: false,
+  });
+
+  await documentIdParamSchema.validateAsync(req.params, {
+    abortEarly: false,
+  });
+
+  const documentService = new DocumentService();
+  const result = await documentService.updateDocumentService({
+    ...req.body,
+    id: req.params.document_id,
+  });
+
+  res.send(result);
+};
+
 module.exports = {
   documentPost,
   documentGet,
   documentSingleGet,
+  documentPatch,
 };

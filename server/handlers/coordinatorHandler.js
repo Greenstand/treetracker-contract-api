@@ -5,7 +5,7 @@ const {
   getFilterAndLimitOptions,
 } = require('../utils/helper');
 const HttpError = require('../utils/HttpError');
-const { coordinator_roles } = require('../utils/enums');
+const { COORDINATOR_ROLES } = require('../utils/enums');
 
 const coordinatorPostSchema = Joi.object({
   stakeholder_id: Joi.string().uuid().required(),
@@ -13,7 +13,7 @@ const coordinatorPostSchema = Joi.object({
   coordinator_id: Joi.string().uuid(),
   role: Joi.string()
     .required()
-    .valid(...Object.values(coordinator_roles)),
+    .valid(...Object.values(COORDINATOR_ROLES)),
 }).unknown(false);
 
 const coordinatorGetQuerySchema = Joi.object({
@@ -26,7 +26,7 @@ const coordinatorGetQuerySchema = Joi.object({
 
 const coordinatorPatchSchema = Joi.object({
   active: Joi.boolean(),
-  role: Joi.string().valid(...Object.values(coordinator_roles)),
+  role: Joi.string().valid(...Object.values(COORDINATOR_ROLES)),
 }).unknown(false);
 
 const coordinatorIdParamSchema = Joi.object({

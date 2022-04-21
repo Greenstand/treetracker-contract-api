@@ -33,6 +33,10 @@ class DocumentService {
   async getDocumentById(documentId) {
     return this._document.getDocumentById(documentId);
   }
+
+  async updateDocumentService(documentObject) {
+    return this._document.updateDocumentService(documentObject);
+  }
 }
 
 module.exports = DocumentService;

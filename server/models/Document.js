@@ -52,6 +52,11 @@ class Document {
     // resource not found handled by the handler
     return document ? this._response(document) : document;
   }
+
+  async updateDocumentService(documentObject) {
+    const updatedObject = await this._documentRepository.update(documentObject);
+    return this._response(updatedObject);
+  }
 }
 
 module.exports = Document;

@@ -1,31 +1,38 @@
 module.exports = {
-  contract_status: {
+  CONTRACT_STATUS: {
     unsigned: 'unsigned',
     signed: 'signed',
     cancelled: 'cancelled',
     completed: 'completed',
   },
 
-  coordinator_roles: {
+  COORDINATOR_ROLES: {
     supervisor: 'supervisor',
     area_manager: 'area_manager',
   },
 
-  currency: {
+  CURRENCY: {
     USD: 'USD',
     SLL: 'SLL',
   },
 
-  agreement_status: {
+  AGREEMENT_STATUS: {
     planning: 'planning',
     open: 'open',
     closed: 'closed',
     aborted: 'aborted',
   },
 
-  agreement_type: {
+  AGREEMENT_TYPE: {
     grower: 'grower',
     nursury: 'nursury',
     village_champion: 'village_champion',
+  },
+
+  SPECIES_TYPE: {
+    other: 'other',
+    any: 'any',
+    specific: 'specific',
+    genus: 'genus',
   },
 };
