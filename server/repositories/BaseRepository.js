@@ -1,5 +1,4 @@
 const expect = require('expect-runtime');
-const HttpError = require('../utils/HttpError');
 
 class BaseRepository {
   constructor(tableName, session) {
@@ -15,9 +14,6 @@ class BaseRepository {
       .table(this._tableName)
       .where('id', id)
       .first();
-    if (!object) {
-      throw new HttpError(404, `Can not found ${this._tableName} by id:${id}`);
-    }
     return object;
   }
 
@@ -33,7 +29,7 @@ class BaseRepository {
       if (object.and) {
         expect(Object.keys(object)).lengthOf(1);
         expect(object.and).a(expect.any(Array));
-        object.and.forEach( one => {
+        object.and.forEach((one) => {
           if (one.or) {
             result = result.andWhere((subBuilder) =>
               whereBuilder(one, subBuilder),
@@ -49,7 +45,7 @@ class BaseRepository {
       } else if (object.or) {
         expect(Object.keys(object)).lengthOf(1);
         expect(object.or).a(expect.any(Array));
-        object.or.forEach( one => {
+        object.or.forEach((one) => {
           if (one.and) {
             result = result.orWhere((subBuilder) =>
               whereBuilder(one, subBuilder),
@@ -102,7 +98,7 @@ class BaseRepository {
       .returning('*');
     expect(result).match([
       {
-        id: expect.any(Number),
+        id: expect.anything(),
       },
     ]);
     return result[0];
