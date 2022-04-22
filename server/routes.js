@@ -38,6 +38,13 @@ const {
   speciesPayoutSingleGet,
 } = require('./handlers/speciesPayoutHandler');
 
+const {
+  consolidationRulePost,
+  consolidationRuleGet,
+  consolidationRulePatch,
+  consolidationRuleSingleGet,
+} = require('./handlers/consolidationRuleHandler');
+
 // DOCUMENT ROUTES
 router
   .route('/document')
@@ -87,5 +94,15 @@ router
   .route('/species_payout/:species_payout_id')
   .patch(handlerWrapper(speciesPayoutPatch))
   .get(handlerWrapper(speciesPayoutSingleGet));
+
+// CONSOLIDATION RULE ROUTES
+router
+  .route('/consolidation_rule')
+  .post(handlerWrapper(consolidationRulePost))
+  .get(handlerWrapper(consolidationRuleGet));
+router
+  .route('/consolidation_rule/:consolidation_rule_id')
+  .patch(handlerWrapper(consolidationRulePatch))
+  .get(handlerWrapper(consolidationRuleSingleGet));
 
 module.exports = router;
