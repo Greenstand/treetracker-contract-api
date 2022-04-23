@@ -36,8 +36,21 @@ class SpeciesPayoutService {
     return this._speciesPayout.getSpeciesPayoutById(speciesPayoutId);
   }
 
-  async updateSpeciesPayoutService(speciesPayoutObject) {
-    return this._speciesPayout.updateSpeciesPayoutService(speciesPayoutObject);
+  async updateSpeciesPayout(speciesPayoutObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._speciesPayout.updateSpeciesPayout(
+        speciesPayoutObject,
+      );
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

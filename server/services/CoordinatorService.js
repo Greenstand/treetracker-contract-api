@@ -36,8 +36,21 @@ class CoordinatorService {
     return this._coordinator.getCoordinatorById(coordinatorId);
   }
 
-  async updateCoordinatorService(requestObject) {
-    return this._coordinator.updateCoordinatorService(requestObject);
+  async updateCoordinator(coordinatorObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._coordinator.updateCoordinator(
+        coordinatorObject,
+      );
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

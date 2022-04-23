@@ -57,9 +57,9 @@ class CoordinationTeam {
       : coordinationTeam;
   }
 
-  async updateCoordinationTeamService(requestObject) {
+  async updateCoordinationTeam(coordinationTeamObject) {
     const updatedObject = await this._coordinationTeamRepository.update(
-      requestObject,
+      coordinationTeamObject,
     );
 
     return this._response(updatedObject);

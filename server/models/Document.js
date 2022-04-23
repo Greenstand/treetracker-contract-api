@@ -53,7 +53,7 @@ class Document {
     return document ? this._response(document) : document;
   }
 
-  async updateDocumentService(documentObject) {
+  async updateDocument(documentObject) {
     const updatedObject = await this._documentRepository.update(documentObject);
     return this._response(updatedObject);
   }

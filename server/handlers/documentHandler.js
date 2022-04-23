@@ -92,7 +92,7 @@ const documentPatch = async function (req, res) {
   });
 
   const documentService = new DocumentService();
-  const result = await documentService.updateDocumentService({
+  const result = await documentService.updateDocument({
     ...req.body,
     id: req.params.document_id,
   });

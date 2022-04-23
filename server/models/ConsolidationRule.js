@@ -60,7 +60,7 @@ class ConsolidationRule {
       : consolidationRule;
   }
 
-  async updateConsolidationRuleService(consolidationRuleObject) {
+  async updateConsolidationRule(consolidationRuleObject) {
     const updatedObject = await this._consolidationRuleRepository.update(
       consolidationRuleObject,
     );

@@ -57,7 +57,7 @@ class SpeciesAgreement {
       : speciesAgreement;
   }
 
-  async updateSpeciesAgreementService(speciesAgreementObject) {
+  async updateSpeciesAgreement(speciesAgreementObject) {
     const updatedObject = await this._speciesAgreementRepository.update(
       speciesAgreementObject,
     );

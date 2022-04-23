@@ -112,7 +112,7 @@ const consolidationRulePatch = async function (req, res) {
   });
 
   const consolidationRuleService = new ConsolidationRuleService();
-  const result = await consolidationRuleService.updateConsolidationRuleService({
+  const result = await consolidationRuleService.updateConsolidationRule({
     ...req.body,
     id: req.params.consolidation_rule_id,
   });

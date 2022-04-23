@@ -82,7 +82,7 @@ const speciesAgreementPatch = async function (req, res) {
   });
 
   const speciesAgreementService = new SpeciesAgreementService();
-  const result = await speciesAgreementService.updateSpeciesAgreementService({
+  const result = await speciesAgreementService.updateSpeciesAgreement({
     ...req.body,
     id: req.params.species_agreement_id,
   });

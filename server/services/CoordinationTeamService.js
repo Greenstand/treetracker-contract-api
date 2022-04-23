@@ -36,8 +36,21 @@ class CoordinationTeamService {
     return this._coordinationTeam.getCoordinationTeamById(coordinationTeamId);
   }
 
-  async updateCoordinationTeamService(requestObject) {
-    return this._coordinationTeam.updateCoordinationTeamService(requestObject);
+  async updateCoordinationTeam(coordinationTeamObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._coordinationTeam.updateCoordinationTeam(
+        coordinationTeamObject,
+      );
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

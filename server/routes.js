@@ -45,6 +45,13 @@ const {
   consolidationRuleSingleGet,
 } = require('./handlers/consolidationRuleHandler');
 
+const {
+  agreementPost,
+  agreementGet,
+  agreementPatch,
+  agreementSingleGet,
+} = require('./handlers/agreementHandler');
+
 // DOCUMENT ROUTES
 router
   .route('/document')
@@ -104,5 +111,15 @@ router
   .route('/consolidation_rule/:consolidation_rule_id')
   .patch(handlerWrapper(consolidationRulePatch))
   .get(handlerWrapper(consolidationRuleSingleGet));
+
+// AGREEMENT ROUTES
+router
+  .route('/agreement')
+  .post(handlerWrapper(agreementPost))
+  .get(handlerWrapper(agreementGet));
+router
+  .route('/agreement/:agreement_id')
+  .patch(handlerWrapper(agreementPatch))
+  .get(handlerWrapper(agreementSingleGet));
 
 module.exports = router;

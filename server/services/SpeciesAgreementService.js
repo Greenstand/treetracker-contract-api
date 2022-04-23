@@ -36,10 +36,21 @@ class SpeciesAgreementService {
     return this._speciesAgreement.getSpeciesAgreementById(speciesAgreementId);
   }
 
-  async updateSpeciesAgreementService(speciesAgreementObject) {
-    return this._speciesAgreement.updateSpeciesAgreementService(
-      speciesAgreementObject,
-    );
+  async updateSpeciesAgreement(speciesAgreementObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._speciesAgreement.updateSpeciesAgreement(
+        speciesAgreementObject,
+      );
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

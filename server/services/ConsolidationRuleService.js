@@ -38,10 +38,21 @@ class ConsolidationRuleService {
     );
   }
 
-  async updateConsolidationRuleService(consolidationRuleObject) {
-    return this._consolidationRule.updateConsolidationRuleService(
-      consolidationRuleObject,
-    );
+  async updateConsolidationRule(consolidationRuleObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._consolidationRule.updateConsolidationRule(
+        consolidationRuleObject,
+      );
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

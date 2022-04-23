@@ -34,8 +34,19 @@ class DocumentService {
     return this._document.getDocumentById(documentId);
   }
 
-  async updateDocumentService(documentObject) {
-    return this._document.updateDocumentService(documentObject);
+  async updateDocument(documentObject) {
+    try {
+      await this._session.beginTransaction();
+      const result = await this._document.updateDocument(documentObject);
+      await this._session.commitTransaction();
+
+      return result;
+    } catch (e) {
+      if (this._session.isTransactionInProgress()) {
+        await this._session.rollbackTransaction();
+      }
+      throw e;
+    }
   }
 }
 

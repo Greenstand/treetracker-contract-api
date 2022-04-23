@@ -59,9 +59,9 @@ class Coordinator {
     return coordinator ? this._response(coordinator) : coordinator;
   }
 
-  async updateCoordinatorService(requestObject) {
+  async updateCoordinator(coordinatorObject) {
     const updatedObject = await this._coordinatorRepository.update(
-      requestObject,
+      coordinatorObject,
     );
 
     return this._response(updatedObject);

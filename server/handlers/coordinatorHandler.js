@@ -104,7 +104,7 @@ const coordinatorPatch = async function (req, res) {
   });
 
   const coordinatorService = new CoordinatorService();
-  const result = await coordinatorService.updateCoordinatorService({
+  const result = await coordinatorService.updateCoordinator({
     ...req.body,
     id: req.params.coordinator_id,
   });

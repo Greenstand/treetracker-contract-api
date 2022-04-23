@@ -63,7 +63,7 @@ class SpeciesPayout {
     return speciesPayout ? this._response(speciesPayout) : speciesPayout;
   }
 
-  async updateSpeciesPayoutService(speciesPayoutObject) {
+  async updateSpeciesPayout(speciesPayoutObject) {
     const updatedObject = await this._speciesPayoutRepository.update(
       speciesPayoutObject,
     );

@@ -103,7 +103,7 @@ const coordinationTeamPatch = async function (req, res) {
   });
 
   const coordinationTeamService = new CoordinationTeamService();
-  const result = await coordinationTeamService.updateCoordinationTeamService({
+  const result = await coordinationTeamService.updateCoordinationTeam({
     ...req.body,
     id: req.params.coordination_team_id,
   });
