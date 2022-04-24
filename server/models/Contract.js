@@ -47,7 +47,7 @@ class Contract {
       limitOptions,
     );
 
-    return contracts.map((a) => this._response(a));
+    return contracts.map((c) => this._response(c));
   }
 
   async getContractsCount(filter) {

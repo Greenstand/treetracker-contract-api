@@ -5,7 +5,7 @@ const handlers = require('./handlers');
 const { handlerWrapper } = require('./utils/utils');
 const { snakeToCamelCase } = require('./utils/helper');
 
-const resources = [
+const routes = [
   'document',
   'coordination_team',
   'coordinator',
@@ -15,9 +15,10 @@ const resources = [
   'agreement',
   'agreement_region',
   'contract',
+  'contract_document',
 ];
 
-resources.forEach((r) => {
+routes.forEach((r) => {
   const R = snakeToCamelCase(r);
   router
     .route(`/${r}`)

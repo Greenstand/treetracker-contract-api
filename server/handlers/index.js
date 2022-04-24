@@ -8,4 +8,5 @@ module.exports = {
   ...require('./agreementHandler'),
   ...require('./agreementRegionHandler'),
   ...require('./contractHandler'),
+  ...require('./contractDocumentHandler'),
 };
