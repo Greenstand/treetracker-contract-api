@@ -43,7 +43,7 @@ class ConsolidationRule {
     const consolidationRules =
       await this._consolidationRuleRepository.getByFilter(filter, limitOptions);
 
-    return consolidationRules.map((d) => this._response(d));
+    return consolidationRules.map((c) => this._response(c));
   }
 
   async getConsolidationRulesCount(filter) {

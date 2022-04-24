@@ -92,7 +92,6 @@ const speciesPayoutPatch = async function (req, res) {
   const speciesPayoutService = new SpeciesPayoutService();
   const result = await speciesPayoutService.updateSpeciesPayout({
     ...req.body,
-    closed_at: new Date().toISOString(), // only update that can happen is setting open to false
     id: req.params.species_payout_id,
   });
 

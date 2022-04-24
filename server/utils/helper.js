@@ -1,4 +1,4 @@
-const generatePrevAndNext = ({
+exports.generatePrevAndNext = ({
   url,
   count,
   limitOptions: { limit, offset },
@@ -29,7 +29,7 @@ const generatePrevAndNext = ({
   return { next: nextUrl, prev };
 };
 
-const getFilterAndLimitOptions = (query) => {
+exports.getFilterAndLimitOptions = (query) => {
   const filter = { ...query };
   const limitOptions = {};
 
@@ -43,7 +43,9 @@ const getFilterAndLimitOptions = (query) => {
   return { filter, limitOptions };
 };
 
-module.exports = {
-  generatePrevAndNext,
-  getFilterAndLimitOptions,
-};
+exports.snakeToCamelCase = (str) =>
+  str
+    .toLowerCase()
+    .replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace('-', '').replace('_', ''),
+    );

@@ -64,9 +64,12 @@ class SpeciesPayout {
   }
 
   async updateSpeciesPayout(speciesPayoutObject) {
-    const updatedObject = await this._speciesPayoutRepository.update(
-      speciesPayoutObject,
-    );
+    const updatedObject = await this._speciesPayoutRepository.update({
+      ...speciesPayoutObject,
+      ...(speciesPayoutObject.open === false && {
+        closed_at: new Date().toISOString(),
+      }),
+    });
     return this._response(updatedObject);
   }
 }

@@ -68,7 +68,7 @@ class Agreement {
       limitOptions,
     );
 
-    return agreements.map((d) => this._response(d));
+    return agreements.map((a) => this._response(a));
   }
 
   async getAgreementsCount(filter) {

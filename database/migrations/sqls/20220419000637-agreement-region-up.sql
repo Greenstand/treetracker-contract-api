@@ -6,5 +6,5 @@ CREATE TABLE agreement_region
     name varchar NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     closed_at timestamptz,
-    listed boolean NOT NULL DEFAULT true
+    open boolean NOT NULL DEFAULT true
 );

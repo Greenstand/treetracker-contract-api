@@ -1,8 +1,8 @@
 CREATE TABLE contract 
 (
     id uuid NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-    agreement_id uuid REFERENCES agreement(id),
-    worker_id uuid,
+    agreement_id uuid NOT NULL REFERENCES agreement(id),
+    worker_id uuid NOT NULL,
     status varchar NOT NULL DEFAULT 'unsigned',
     notes varchar,
     created_at timestamptz NOT NULL DEFAULT now(),

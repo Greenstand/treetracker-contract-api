@@ -1,6 +1,6 @@
 module.exports = {
   CONTRACT_STATUS: {
-    unsigned: 'unsigned',
+    // unsigned: 'unsigned', // db insert default
     signed: 'signed',
     cancelled: 'cancelled',
     completed: 'completed',
@@ -17,7 +17,7 @@ module.exports = {
   },
 
   AGREEMENT_STATUS: {
-    planning: 'planning',
+    // planning: 'planning', // db insert default
     open: 'open',
     closed: 'closed',
     aborted: 'aborted',
