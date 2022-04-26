@@ -74,9 +74,10 @@ const speciesPayoutGet = async function (req, res) {
   });
 
   res.send({
-    species_payout: speciesPayouts,
+    species_payouts: speciesPayouts,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

@@ -67,7 +67,8 @@ const contractGet = async function (req, res) {
   res.send({
     contracts,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

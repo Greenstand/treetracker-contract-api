@@ -44,7 +44,6 @@ const agreementIdParamSchema = Joi.object({
 }).unknown(false);
 
 const agreementPatchSchema = Joi.object({
-  funder_id: Joi.string().uuid(),
   growing_organization_id: Joi.string().uuid(),
   coordination_team_id: Joi.string().uuid(),
   species_agreement_id: Joi.string().uuid(),
@@ -101,7 +100,8 @@ const agreementGet = async function (req, res) {
   res.send({
     agreements,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

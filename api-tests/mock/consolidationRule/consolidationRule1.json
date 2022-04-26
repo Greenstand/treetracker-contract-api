@@ -1,0 +1,6 @@
+{
+  "owner_id": "e1ed40e1-e2b2-465d-93ed-71337ffb8338",
+  "name": "Consolidation Rule 02",
+  "lambda": "lambda_02",
+  "parameters": [{ "key": "key", "value": "value" }]
+}

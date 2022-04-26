@@ -70,7 +70,8 @@ const coordinatorGet = async function (req, res) {
   res.send({
     coordinators,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

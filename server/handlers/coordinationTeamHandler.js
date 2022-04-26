@@ -66,9 +66,10 @@ const coordinationTeamGet = async function (req, res) {
   });
 
   res.send({
-    coordinationTeams,
+    coordination_teams: coordinationTeams,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

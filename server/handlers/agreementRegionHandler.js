@@ -66,7 +66,8 @@ const agreementRegionGet = async function (req, res) {
   res.send({
     agreement_regions: agreementRegions,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

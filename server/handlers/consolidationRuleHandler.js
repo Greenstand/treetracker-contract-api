@@ -77,7 +77,8 @@ const consolidationRuleGet = async function (req, res) {
   res.send({
     consolidation_rules: consolidationRules,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

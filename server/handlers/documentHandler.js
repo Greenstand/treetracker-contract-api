@@ -61,7 +61,7 @@ const documentGet = async function (req, res) {
     queryObject: { ...filter, ...limitOptions },
   });
 
-  res.send({ documents, links, query: { count, ...limitOptions, ...filter } });
+  res.send({ documents, links, count, query: { ...limitOptions, ...filter } });
 };
 
 const documentSingleGet = async function (req, res) {

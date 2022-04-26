@@ -1,7 +1,7 @@
 CREATE TABLE species_payout
 (
     id uuid NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-    species_agreement_id uuid REFERENCES species_agreement(id),
+    species_agreement_id uuid NOT NULL REFERENCES species_agreement(id),
     type varchar NOT NULL,
     scientific_name varchar NOT NULL,
     species_id uuid NOT NULL,

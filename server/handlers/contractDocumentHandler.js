@@ -16,6 +16,7 @@ const contractDocumentPostSchema = Joi.object({
 const contractDocumentGetQuerySchema = Joi.object({
   offset: Joi.number().integer().greater(-1),
   limit: Joi.number().integer().greater(0),
+  listed: Joi.boolean(),
 }).unknown(false);
 
 const contractDocumentIdParamSchema = Joi.object({
@@ -63,7 +64,8 @@ const contractDocumentGet = async function (req, res) {
   res.send({
     contract_documents: contractDocuments,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 

@@ -66,9 +66,10 @@ const speciesAgreementGet = async function (req, res) {
   });
 
   res.send({
-    species_agreement: speciesAgreements,
+    species_agreements: speciesAgreements,
     links,
-    query: { count, ...limitOptions, ...filter },
+    count,
+    query: { ...limitOptions, ...filter },
   });
 };
 
