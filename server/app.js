@@ -19,6 +19,15 @@ if (process.env.NODE_ENV === 'development') {
  */
 app.use(
   handlerWrapper(async (req, _res, next) => {
+    if (req.path === '/document' && req.method === 'POST') {
+      if (!req.headers?.['content-type']?.includes('multipart/form-data')) {
+        throw new HttpError(
+          415,
+          'Invalid content type. Endpoint only supports multipart/form-data',
+        );
+      }
+      return next();
+    }
     if (
       req.method === 'POST' ||
       req.method === 'PATCH' ||
@@ -31,7 +40,7 @@ app.use(
         );
       }
     }
-    next();
+    return next();
   }),
 );
 

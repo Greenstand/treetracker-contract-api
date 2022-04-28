@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const consolidationRule = require('./mock/consolidationRule/consolidationRule2.json');
 const coordinationTeam = require('./mock/coordinationTeam/coordinationTeam2.json');
 const speciesAgreement = require('./mock/speciesAgreement/speciesAgreement2.json');
@@ -67,7 +67,6 @@ describe('/agreement_region', () => {
         ...agreementRegion2,
         open: true,
       });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 

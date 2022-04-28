@@ -1,5 +1,8 @@
-const Session = require('../database/Session');
+const fs = require('fs');
+const { v4: uuid } = require('uuid');
+const Session = require('../infra/database/Session');
 const Document = require('../models/Document');
+const { uploadCsv } = require('./S3Service');
 
 class DocumentService {
   constructor() {
@@ -7,17 +10,31 @@ class DocumentService {
     this._document = new Document(this._session);
   }
 
-  async createDocument(documentObject) {
+  async createDocument(documentObject, file) {
     try {
+      const key = `contract_document/${new Date().toISOString()}_${
+        documentObject.name
+      }_${uuid()}.csv`;
+      const fileBuffer = await fs.promises.readFile(file.path);
+      const uploadResult = await uploadCsv(fileBuffer, key);
+
       await this._session.beginTransaction();
-      const result = await this._document.createDocument(documentObject);
+      const result = await this._document.createDocument({
+        ...documentObject,
+        hardcopy_url: uploadResult.Location,
+      });
       await this._session.commitTransaction();
+
+      // delete temp file
+      await fs.promises.unlink(file.path);
 
       return result;
     } catch (e) {
       if (this._session.isTransactionInProgress()) {
         await this._session.rollbackTransaction();
       }
+      // delete temp file
+      await fs.promises.unlink(file.path);
       throw e;
     }
   }

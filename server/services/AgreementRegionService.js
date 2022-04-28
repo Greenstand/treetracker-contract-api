@@ -1,4 +1,4 @@
-const Session = require('../database/Session');
+const Session = require('../infra/database/Session');
 const AgreementRegion = require('../models/AgreementRegion');
 
 class AgreementRegionService {

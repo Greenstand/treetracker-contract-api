@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const consolidationRule1 = require('./mock/consolidationRule/consolidationRule1.json');
 const consolidationRule2 = require('./mock/consolidationRule/consolidationRule2.json');
 
@@ -62,7 +62,6 @@ describe('/consolidation_rule', () => {
         .expect(200);
 
       expect(res.body).includes({ ...consolidationRule2 });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 

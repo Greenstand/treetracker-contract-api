@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const coordinationTeam1 = require('./mock/coordinationTeam/coordinationTeam1.json');
 const coordinationTeam2 = require('./mock/coordinationTeam/coordinationTeam2.json');
 
@@ -60,7 +60,6 @@ describe('/coordination_team', () => {
         ...coordinationTeam2,
         listed: true,
       });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 
@@ -80,8 +79,9 @@ describe('/coordination_team', () => {
         name,
         description,
       });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
-      expect(typeof Date.parse(res.body.updated_at)).to.eql('number');
+      expect(Date.parse(res.body.updated_at)).to.greaterThan(
+        Date.parse(res.body.created_at),
+      );
     });
   });
 });

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Joi = require('joi');
 
 const DocumentService = require('../services/DocumentService');
@@ -11,8 +12,6 @@ const documentPostSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string(),
   version: Joi.number().integer(),
-  hardcopy_url: Joi.string().uri().required(),
-  listed: Joi.boolean(),
 }).unknown(false);
 
 const documentGetQuerySchema = Joi.object({
@@ -30,13 +29,22 @@ const documentPatchSchema = Joi.object({
   listed: Joi.boolean(),
 }).unknown(false);
 
-const documentPost = async function (req, res) {
-  await documentPostSchema.validateAsync(req.body, {
-    abortEarly: false,
-  });
+const documentPost = async function (req, res, next) {
+  if (req.file.mimetype !== 'application/pdf')
+    throw new HttpError(406, 'Only pdf documents are supported');
+
+  try {
+    await documentPostSchema.validateAsync(req.body, {
+      abortEarly: false,
+    });
+  } catch (e) {
+    // remove uploaded file if validation fails
+    await fs.promises.unlink(req.file.path);
+    next(e);
+  }
 
   const documentService = new DocumentService();
-  const result = await documentService.createDocument(req.body);
+  const result = await documentService.createDocument(req.body, req.file);
 
   res.status(201).send(result);
 };

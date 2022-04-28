@@ -32,7 +32,7 @@
     "no-shadow": "error",
     "import/order": "error",
     "no-unused-expressions": "error",
-    "import/no-extraneous-dependencies": "error",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "import/no-unresolved": "error",
     "no-plusplus": "error",
     "no-continue": "off"

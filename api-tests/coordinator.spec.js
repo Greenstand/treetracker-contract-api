@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const coordinationTeam2 = require('./mock/coordinationTeam/coordinationTeam2.json');
 const coordinator1 = require('./mock/coordinator/coordinator1');
 const coordinator2 = require('./mock/coordinator/coordinator2');
@@ -59,7 +59,6 @@ describe('/coordinator', () => {
         .expect(200);
 
       expect(res.body).includes({ ...coordinator2 });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 
@@ -76,6 +75,9 @@ describe('/coordinator', () => {
         active: false,
         role: COORDINATOR_ROLES.area_manager,
       });
+      expect(Date.parse(res.body.updated_at)).to.greaterThan(
+        Date.parse(res.body.created_at),
+      );
     });
   });
 });

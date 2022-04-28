@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const speciesPayout1 = require('./mock/speciesPayout/speciesPayout1');
 const speciesPayout2 = require('./mock/speciesPayout/speciesPayout2');
 const speciesAgreement2 = require('./mock/speciesAgreement/speciesAgreement2.json');
@@ -61,7 +61,6 @@ describe('/species_payout', () => {
         ...speciesPayout2,
         open: true,
       });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 
@@ -78,6 +77,9 @@ describe('/species_payout', () => {
         open: false,
       });
       expect(typeof Date.parse(res.body.closed_at)).to.eql('number');
+      expect(Date.parse(res.body.closed_at)).to.greaterThan(
+        Date.parse(res.body.created_at),
+      );
     });
   });
 });

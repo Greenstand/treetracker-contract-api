@@ -1,4 +1,4 @@
-const Session = require('../database/Session');
+const Session = require('../infra/database/Session');
 const SpeciesPayout = require('../models/SpeciesPayout');
 
 class SpeciesPayoutService {

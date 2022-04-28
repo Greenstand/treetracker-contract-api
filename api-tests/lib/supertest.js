@@ -1,5 +1,5 @@
-const supertest = require('supertest'); /* eslint-disable-line import/no-extraneous-dependencies */
-const status = require('statuses'); /* eslint-disable-line import/no-extraneous-dependencies */
+const supertest = require('supertest');
+const status = require('statuses');
 const log = require('loglevel');
 
 log.setLevel(process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'warn');

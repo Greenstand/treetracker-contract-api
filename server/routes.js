@@ -1,6 +1,8 @@
 const express = require('express');
+const multer = require('multer');
 
 const router = express.Router();
+const upload = multer({ dest: 'tmp/doc/' });
 const handlers = require('./handlers');
 const { handlerWrapper } = require('./utils/utils');
 const { snakeToCamelCase } = require('./utils/helper');
@@ -17,6 +19,13 @@ const routes = [
   'contract',
   'contract_document',
 ];
+
+// 'custom' routes
+router.post(
+  '/document',
+  upload.single('document'),
+  handlerWrapper(handlers.documentPost),
+);
 
 routes.forEach((r) => {
   const R = snakeToCamelCase(r);

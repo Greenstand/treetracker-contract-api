@@ -6,7 +6,7 @@ const { expect } = chai;
 chai.use(require('chai-like'));
 chai.use(require('chai-things'));
 const app = require('../server/app');
-const knex = require('../server/database/knex');
+const knex = require('../server/infra/database/knex');
 const speciesAgreement1 = require('./mock/speciesAgreement/speciesAgreement1.json');
 const speciesAgreement2 = require('./mock/speciesAgreement/speciesAgreement2.json');
 
@@ -57,7 +57,6 @@ describe('/species_agreement', () => {
         .expect(200);
 
       expect(res.body).includes({ ...speciesAgreement2 });
-      expect(typeof Date.parse(res.body.created_at)).to.eql('number');
     });
   });
 
