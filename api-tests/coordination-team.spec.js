@@ -13,7 +13,7 @@ const coordinationTeam2 = require('./mock/coordinationTeam/coordinationTeam2.jso
 // Global Seed
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 
-describe('/coordination_team', () => {
+describe.only('/coordination_team', () => {
   before(async function () {
     await knex('coordination_team').insert(coordinationTeam2);
   });
@@ -64,24 +64,63 @@ describe('/coordination_team', () => {
   });
 
   describe('UPDATE', () => {
+    const name = 'new name';
+    const description = 'new description';
     it('should update set fields', async () => {
-      const name = 'new name';
-      const description = 'new description';
       const res = await request(app)
         .patch(`/coordination_team/${coordinationTeam2.id}`)
-        .send({ name, description, listed: false })
+        .send({ name, description })
         .set('Accept', 'application/json')
         .expect(200);
 
       expect(res.body).includes({
         ...coordinationTeam2,
-        listed: false,
         name,
         description,
       });
       expect(Date.parse(res.body.updated_at)).to.greaterThan(
         Date.parse(res.body.created_at),
       );
+    });
+
+    describe('UPDATE listed variable', () => {
+      it('should updated listed', async () => {
+        const res = await request(app)
+          .patch(`/coordination_team/${coordinationTeam2.id}`)
+          .send({ listed: false })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...coordinationTeam2,
+          name,
+          description,
+          listed: false,
+        });
+      });
+
+      it('should get all species agreements without archived ones', async () => {
+        const res = await request(app)
+          .get(`/coordination_team`)
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body.coordination_teams.length).to.eql(1);
+        expect(res.body.count).to.eql(1);
+        expect(res.body.coordination_teams[0].listed).to.be.true;
+      });
+
+      it('should get all archived ones if requested', async () => {
+        const res = await request(app)
+          .get(`/coordination_team`)
+          .query({ listed: false })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body.coordination_teams.length).to.eql(1);
+        expect(res.body.count).to.eql(1);
+        expect(res.body.coordination_teams[0].listed).to.be.false;
+      });
     });
   });
 });

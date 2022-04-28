@@ -10,7 +10,6 @@ const coordinationTeamPostSchema = Joi.object({
   owner_id: Joi.string().uuid().required(),
   name: Joi.string().required(),
   description: Joi.string(),
-  listed: Joi.boolean(),
 }).unknown(false);
 
 const coordinationTeamGetQuerySchema = Joi.object({

@@ -38,13 +38,19 @@ class CoordinationTeam {
 
   async getCoordinationTeams(filter, limitOptions) {
     const coordinationTeams =
-      await this._coordinationTeamRepository.getByFilter(filter, limitOptions);
+      await this._coordinationTeamRepository.getByFilter(
+        { listed: true, ...filter },
+        limitOptions,
+      );
 
     return coordinationTeams.map((c) => this._response(c));
   }
 
   async getCoordinationTeamsCount(filter) {
-    return this._coordinationTeamRepository.countByFilter(filter);
+    return this._coordinationTeamRepository.countByFilter({
+      listed: true,
+      ...filter,
+    });
   }
 
   async getCoordinationTeamById(coordinationTeamId) {
