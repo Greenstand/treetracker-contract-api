@@ -60,7 +60,7 @@ describe('/species_agreement', () => {
     });
   });
 
-  describe('UPDATE', () => {
+  describe('UPDATE listed variable', () => {
     it('should updated listed', async () => {
       const res = await request(app)
         .patch(`/species_agreement/${speciesAgreement2.id}`)
@@ -69,6 +69,29 @@ describe('/species_agreement', () => {
         .expect(200);
 
       expect(res.body).includes({ ...speciesAgreement2, listed: false });
+    });
+
+    it('should get all species agreements without archived ones', async () => {
+      const res = await request(app)
+        .get(`/species_agreement`)
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.species_agreements.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.species_agreements[0].listed).to.be.true;
+    });
+
+    it('should get all archived ones if requested', async () => {
+      const res = await request(app)
+        .get(`/species_agreement`)
+        .query({ listed: false })
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.species_agreements.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.species_agreements[0].listed).to.be.false;
     });
   });
 });

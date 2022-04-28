@@ -10,7 +10,6 @@ const HttpError = require('../utils/HttpError');
 const speciesAgreementPostSchema = Joi.object({
   name: Joi.string().required(),
   owner_id: Joi.string().uuid().required(),
-  listed: Joi.boolean(),
   description: Joi.string(),
   variable_species_payout: Joi.boolean(),
 }).unknown(false);

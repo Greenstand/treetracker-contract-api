@@ -36,7 +36,7 @@ class Document {
 
   async getDocuments(filter, limitOptions) {
     const documents = await this._documentRepository.getByFilter(
-      filter,
+      { listed: true, ...filter },
       limitOptions,
     );
 
@@ -44,7 +44,7 @@ class Document {
   }
 
   async getDocumentsCount(filter) {
-    return this._documentRepository.countByFilter(filter);
+    return this._documentRepository.countByFilter({ listed: true, ...filter });
   }
 
   async getDocumentById(documentId) {

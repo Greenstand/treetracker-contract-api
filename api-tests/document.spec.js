@@ -73,5 +73,28 @@ describe('/document', () => {
 
       expect(res.body).includes({ ...document2, listed: false });
     });
+
+    it('should get all species agreements without archived ones', async () => {
+      const res = await request(app)
+        .get(`/document`)
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.documents.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.documents[0].listed).to.be.true;
+    });
+
+    it('should get all archived ones if requested', async () => {
+      const res = await request(app)
+        .get(`/document`)
+        .query({ listed: false })
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.documents.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.documents[0].listed).to.be.false;
+    });
   });
 });

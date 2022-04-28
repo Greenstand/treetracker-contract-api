@@ -38,13 +38,19 @@ class SpeciesAgreement {
 
   async getSpeciesAgreements(filter, limitOptions) {
     const speciesAgreements =
-      await this._speciesAgreementRepository.getByFilter(filter, limitOptions);
+      await this._speciesAgreementRepository.getByFilter(
+        { listed: true, ...filter },
+        limitOptions,
+      );
 
     return speciesAgreements.map((s) => this._response(s));
   }
 
   async getSpeciesAgreementsCount(filter) {
-    return this._speciesAgreementRepository.countByFilter(filter);
+    return this._speciesAgreementRepository.countByFilter({
+      listed: true,
+      ...filter,
+    });
   }
 
   async getSpeciesAgreementById(speciesAgreementId) {
