@@ -64,7 +64,7 @@ class Agreement {
 
   async getAgreements(filter, limitOptions) {
     const agreements = await this._agreementRepository.getByFilter(
-      filter,
+      { ...filter },
       limitOptions,
     );
 

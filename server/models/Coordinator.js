@@ -40,7 +40,7 @@ class Coordinator {
 
   async getCoordinators(filter, limitOptions) {
     const coordinators = await this._coordinatorRepository.getByFilter(
-      filter,
+      { ...filter, active: true },
       limitOptions,
     );
 
@@ -48,7 +48,10 @@ class Coordinator {
   }
 
   async getCoordinatorsCount(filter) {
-    return this._coordinatorRepository.countByFilter(filter);
+    return this._coordinatorRepository.countByFilter({
+      ...filter,
+      active: true,
+    });
   }
 
   async getCoordinatorById(coordinatorId) {

@@ -66,18 +66,44 @@ describe('/coordinator', () => {
     it('should updated set fields', async () => {
       const res = await request(app)
         .patch(`/coordinator/${coordinator2.id}`)
-        .send({ active: false, role: COORDINATOR_ROLES.area_manager })
+        .send({ role: COORDINATOR_ROLES.area_manager })
         .set('Accept', 'application/json')
         .expect(200);
 
       expect(res.body).includes({
         ...coordinator2,
-        active: false,
         role: COORDINATOR_ROLES.area_manager,
       });
       expect(Date.parse(res.body.updated_at)).to.greaterThan(
         Date.parse(res.body.created_at),
       );
+    });
+
+    it('should "delete" the resource ', async () => {
+      const res = await request(app)
+        .patch(`/coordinator/${coordinator2.id}`)
+        .send({ active: false })
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body).includes({
+        ...coordinator2,
+        role: COORDINATOR_ROLES.area_manager,
+        active: false,
+      });
+
+      await request(app)
+        .get(`/coordinator/${coordinator2.id}`)
+        .set('Accept', 'application/json')
+        .expect(404);
+
+      const res2 = await request(app)
+        .get(`/coordinator`)
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res2.body.coordinators.length).to.eql(2);
+      expect(res2.body.count).to.eql(2);
     });
   });
 });
