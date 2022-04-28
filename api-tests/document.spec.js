@@ -74,7 +74,7 @@ describe('/document', () => {
       expect(res.body).includes({ ...document2, listed: false });
     });
 
-    it('should get all documents without archived ones', async () => {
+    it('should get all documents without archived resources', async () => {
       const res = await request(app)
         .get(`/document`)
         .set('Accept', 'application/json')
@@ -85,7 +85,7 @@ describe('/document', () => {
       expect(res.body.documents[0].listed).to.be.true;
     });
 
-    it('should get all archived ones if requested', async () => {
+    it('should get all archived resources if requested', async () => {
       const res = await request(app)
         .get(`/document`)
         .query({ listed: false })

@@ -88,7 +88,7 @@ describe('/consolidation_rule', () => {
         });
       });
 
-      it('should get all consolidation rules without archived ones', async () => {
+      it('should get all consolidation rules without archived resources', async () => {
         const res = await request(app)
           .get(`/consolidation_rule`)
           .set('Accept', 'application/json')
@@ -99,7 +99,7 @@ describe('/consolidation_rule', () => {
         expect(res.body.consolidation_rules[0].listed).to.be.true;
       });
 
-      it('should get all archived ones if requested', async () => {
+      it('should get all archived resources if requested', async () => {
         const res = await request(app)
           .get(`/consolidation_rule`)
           .query({ listed: false })

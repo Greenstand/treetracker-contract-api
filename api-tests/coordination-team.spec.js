@@ -99,7 +99,7 @@ describe('/coordination_team', () => {
         });
       });
 
-      it('should get all coordination teams without archived ones', async () => {
+      it('should get all coordination teams without archived resources', async () => {
         const res = await request(app)
           .get(`/coordination_team`)
           .set('Accept', 'application/json')
@@ -110,7 +110,7 @@ describe('/coordination_team', () => {
         expect(res.body.coordination_teams[0].listed).to.be.true;
       });
 
-      it('should get all archived ones if requested', async () => {
+      it('should get all archived resources if requested', async () => {
         const res = await request(app)
           .get(`/coordination_team`)
           .query({ listed: false })

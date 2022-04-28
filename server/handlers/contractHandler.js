@@ -12,7 +12,6 @@ const contractPostSchema = Joi.object({
   agreement_id: Joi.string().uuid().required(),
   worker_id: Joi.string().uuid().required(),
   notes: Joi.string(),
-  listed: Joi.boolean(),
 }).unknown(false);
 
 const contractGetQuerySchema = Joi.object({

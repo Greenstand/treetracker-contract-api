@@ -71,7 +71,7 @@ describe('/species_agreement', () => {
       expect(res.body).includes({ ...speciesAgreement2, listed: false });
     });
 
-    it('should get all species agreements without archived ones', async () => {
+    it('should get all species agreements without archived resources', async () => {
       const res = await request(app)
         .get(`/species_agreement`)
         .set('Accept', 'application/json')
@@ -82,7 +82,7 @@ describe('/species_agreement', () => {
       expect(res.body.species_agreements[0].listed).to.be.true;
     });
 
-    it('should get all archived ones if requested', async () => {
+    it('should get all archived resources if requested', async () => {
       const res = await request(app)
         .get(`/species_agreement`)
         .query({ listed: false })

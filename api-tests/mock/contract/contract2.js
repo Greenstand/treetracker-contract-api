@@ -5,7 +5,7 @@ const contract = {
   agreement_id: agreement.id,
   worker_id: '7d37c9b9-4291-4f0c-90f8-8ee9094dfa79',
   status: 'unsigned',
-  notes: 'this is a contract',
+  notes: 'this is contract 2',
 };
 
 module.exports = contract;

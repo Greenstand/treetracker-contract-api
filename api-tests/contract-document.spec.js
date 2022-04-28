@@ -19,7 +19,7 @@ const contractDocument2 = require('./mock/contractDocument/contractDocument2');
 // Global Seed
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 
-describe.only('/contract_document', () => {
+describe('/contract_document', () => {
   before(async function () {
     await knex('consolidation_rule').insert(consolidationRule);
     await knex('species_agreement').insert(speciesAgreement);
@@ -79,7 +79,7 @@ describe.only('/contract_document', () => {
       expect(res.body).includes({ ...contractDocument2, listed: false });
     });
 
-    it('should get all contract documents without archived ones', async () => {
+    it('should get all contract documents without archived resources', async () => {
       const res = await request(app)
         .get(`/contract_document`)
         .set('Accept', 'application/json')
@@ -90,7 +90,7 @@ describe.only('/contract_document', () => {
       expect(res.body.contract_documents[0].listed).to.be.true;
     });
 
-    it('should get all archived ones if requested', async () => {
+    it('should get all archived resources if requested', async () => {
       const res = await request(app)
         .get(`/contract_document`)
         .query({ listed: false })

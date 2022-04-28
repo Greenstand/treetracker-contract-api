@@ -2,8 +2,9 @@ module.exports = {
   CONTRACT_STATUS: {
     // unsigned: 'unsigned', // db default state
     signed: 'signed',
-    cancelled: 'cancelled',
     completed: 'completed',
+    aborted: 'aborted',
+    cancelled: 'cancelled',
   },
 
   COORDINATOR_ROLES: {
