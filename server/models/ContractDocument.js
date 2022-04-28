@@ -28,13 +28,19 @@ class ContractDocument {
 
   async getContractDocuments(filter, limitOptions) {
     const contractDocuments =
-      await this._contractDocumentRepository.getByFilter(filter, limitOptions);
+      await this._contractDocumentRepository.getByFilter(
+        { listed: true, ...filter },
+        limitOptions,
+      );
 
     return contractDocuments.map((c) => this._response(c));
   }
 
   async getContractDocumentsCount(filter) {
-    return this._contractDocumentRepository.countByFilter(filter);
+    return this._contractDocumentRepository.countByFilter({
+      listed: true,
+      ...filter,
+    });
   }
 
   async getContractDocumentById(contractDocumentId) {

@@ -19,7 +19,7 @@ const contractDocument2 = require('./mock/contractDocument/contractDocument2');
 // Global Seed
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 
-describe('/contract_document', () => {
+describe.only('/contract_document', () => {
   before(async function () {
     await knex('consolidation_rule').insert(consolidationRule);
     await knex('species_agreement').insert(speciesAgreement);
@@ -58,7 +58,7 @@ describe('/contract_document', () => {
       expect(res.body.count).to.eql(2);
     });
 
-    it('should get document by id', async () => {
+    it('should get contract_document by id', async () => {
       const res = await request(app)
         .get(`/contract_document/${contractDocument2.id}`)
         .set('Accept', 'application/json')
@@ -77,6 +77,29 @@ describe('/contract_document', () => {
         .expect(200);
 
       expect(res.body).includes({ ...contractDocument2, listed: false });
+    });
+
+    it('should get all contract documents without archived ones', async () => {
+      const res = await request(app)
+        .get(`/contract_document`)
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.contract_documents.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.contract_documents[0].listed).to.be.true;
+    });
+
+    it('should get all archived ones if requested', async () => {
+      const res = await request(app)
+        .get(`/contract_document`)
+        .query({ listed: false })
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body.contract_documents.length).to.eql(1);
+      expect(res.body.count).to.eql(1);
+      expect(res.body.contract_documents[0].listed).to.be.false;
     });
   });
 });

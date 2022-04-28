@@ -13,7 +13,7 @@ const consolidationRule2 = require('./mock/consolidationRule/consolidationRule2.
 // Global Seed
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 
-describe.only('/consolidation_rule', () => {
+describe('/consolidation_rule', () => {
   before(async function () {
     await knex('consolidation_rule').insert(consolidationRule2);
   });

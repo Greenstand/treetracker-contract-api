@@ -99,7 +99,7 @@ describe('/coordination_team', () => {
         });
       });
 
-      it('should get all species agreements without archived ones', async () => {
+      it('should get all coordination teams without archived ones', async () => {
         const res = await request(app)
           .get(`/coordination_team`)
           .set('Accept', 'application/json')
