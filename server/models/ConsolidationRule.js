@@ -32,22 +32,27 @@ class ConsolidationRule {
   }
 
   async createConsolidationRule(consolidationRuleObject) {
-    const createdObject = await this._consolidationRuleRepository.create({
-      ...consolidationRuleObject,
-      parameters: { parameters: consolidationRuleObject.parameters },
-    });
+    const createdObject = await this._consolidationRuleRepository.create(
+      consolidationRuleObject,
+    );
     return this._response(createdObject);
   }
 
   async getConsolidationRules(filter, limitOptions) {
     const consolidationRules =
-      await this._consolidationRuleRepository.getByFilter(filter, limitOptions);
+      await this._consolidationRuleRepository.getByFilter(
+        { listed: true, ...filter },
+        limitOptions,
+      );
 
     return consolidationRules.map((c) => this._response(c));
   }
 
   async getConsolidationRulesCount(filter) {
-    return this._consolidationRuleRepository.countByFilter(filter);
+    return this._consolidationRuleRepository.countByFilter({
+      listed: true,
+      ...filter,
+    });
   }
 
   async getConsolidationRuleById(consolidationRuleId) {

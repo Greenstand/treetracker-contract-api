@@ -74,7 +74,7 @@ describe('/document', () => {
       expect(res.body).includes({ ...document2, listed: false });
     });
 
-    it('should get all species agreements without archived ones', async () => {
+    it('should get all documents without archived ones', async () => {
       const res = await request(app)
         .get(`/document`)
         .set('Accept', 'application/json')

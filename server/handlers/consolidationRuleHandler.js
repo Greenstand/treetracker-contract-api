@@ -11,15 +11,7 @@ const consolidationRulePostSchema = Joi.object({
   owner_id: Joi.string().uuid().required(),
   name: Joi.string().required(),
   lambda: Joi.string().required(),
-  parameters: Joi.array()
-    .items(
-      Joi.object({
-        key: Joi.string().required(),
-        value: Joi.string().required().allow(''),
-      }),
-    )
-    .allow(null),
-  listed: Joi.boolean(),
+  parameters: Joi.object().allow(null),
 }).unknown(false);
 
 const consolidationRuleGetQuerySchema = Joi.object({

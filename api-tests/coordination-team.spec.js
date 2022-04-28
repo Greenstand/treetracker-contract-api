@@ -13,7 +13,7 @@ const coordinationTeam2 = require('./mock/coordinationTeam/coordinationTeam2.jso
 // Global Seed
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 
-describe.only('/coordination_team', () => {
+describe('/coordination_team', () => {
   before(async function () {
     await knex('coordination_team').insert(coordinationTeam2);
   });
