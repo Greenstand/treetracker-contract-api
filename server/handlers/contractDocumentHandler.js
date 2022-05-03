@@ -10,7 +10,6 @@ const HttpError = require('../utils/HttpError');
 const contractDocumentPostSchema = Joi.object({
   contract_id: Joi.string().uuid().required(),
   document_id: Joi.string().uuid().required(),
-  listed: Joi.boolean(),
 }).unknown(false);
 
 const contractDocumentGetQuerySchema = Joi.object({

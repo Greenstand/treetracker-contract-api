@@ -27,7 +27,6 @@ const agreementPostSchema = Joi.object({
   capture_payment: Joi.number(),
   capture_payment_currency: Joi.string().valid(...Object.values(CURRENCY)),
   max_captures: Joi.number().integer(),
-  listed: Joi.boolean(),
 }).unknown(false);
 
 const agreementGetQuerySchema = Joi.object({

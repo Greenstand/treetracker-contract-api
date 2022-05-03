@@ -29,6 +29,8 @@ describe('/agreement', () => {
     await databaseCleaner.seed(knex);
   });
 
+  let agreement1Id;
+
   describe('POST', () => {
     it('should error out if either species_agreement_id/(currency and payment) is not present', async () => {
       const agreementCopy = { ...agreement1 };
@@ -59,6 +61,8 @@ describe('/agreement', () => {
       });
       expect(typeof Date.parse(res.body.created_at)).to.eql('number');
       expect(res.body.created_at).to.eql(res.body.updated_at);
+
+      agreement1Id = res.body.id;
     });
   });
 
@@ -85,49 +89,201 @@ describe('/agreement', () => {
 
   describe('UPDATE', () => {
     const updates = {
-      description: 'new description',
-      capture_payment: '200',
       capture_payment_currency: CURRENCY.USD,
       max_captures: 100,
-      listed: false,
-      status: AGREEMENT_STATUS.open,
     };
 
-    it('should update set fields', async () => {
+    it('should error out -- agreements in planning cannot be archived and set to open', async () => {
+      const res = await request(app)
+        .patch(`/agreement/${agreement2.id}`)
+        .send({ status: AGREEMENT_STATUS.open, listed: false })
+        .set('Accept', 'application/json')
+        .expect(422);
+
+      expect(res.body.message).eql(
+        'agreements in planning state can only be opened or aborted and cannot be archived when set to "open"',
+      );
+    });
+
+    it('should error out -- agreements in planning can only be set to open or aborted', async () => {
+      const res = await request(app)
+        .patch(`/agreement/${agreement2.id}`)
+        .send({ status: AGREEMENT_STATUS.closed })
+        .set('Accept', 'application/json')
+        .expect(422);
+
+      expect(res.body.message).eql(
+        'agreements in planning state can only be opened or aborted and cannot be archived when set to "open"',
+      );
+    });
+
+    it('should update agreement in planning', async () => {
       const res = await request(app)
         .patch(`/agreement/${agreement2.id}`)
         .send(updates)
         .set('Accept', 'application/json')
         .expect(200);
 
-      expect(res.body).includes({ ...agreement2, ...updates });
-    });
-
-    it('should error out-- an open agreement cannot be updated', async () => {
-      const res = await request(app)
-        .patch(`/agreement/${agreement2.id}`)
-        .send({ description: 'another description' })
-        .set('Accept', 'application/json')
-        .expect(422);
-
-      expect(res.body.message).to.eql(
-        'For open agreements, its status can either be set to close or its listed flag updated',
-      );
-    });
-
-    it('should close an open agreement', async () => {
-      const res = await request(app)
-        .patch(`/agreement/${agreement2.id}`)
-        .send({ status: AGREEMENT_STATUS.closed })
-        .set('Accept', 'application/json')
-        .expect(200);
-
       expect(res.body).includes({
         ...agreement2,
         ...updates,
-        status: AGREEMENT_STATUS.closed,
       });
-      expect(typeof Date.parse(res.body.closed_at)).to.eql('number');
+      expect(Date.parse(res.body.updated_at)).to.greaterThan(
+        Date.parse(res.body.created_at),
+      );
+    });
+
+    describe('agreement1 flow -- planning, open, closed', () => {
+      it('should update status to open', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement1Id}`)
+          .send({ status: AGREEMENT_STATUS.open })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...agreement1,
+          status: AGREEMENT_STATUS.open,
+        });
+        expect(Date.parse(res.body.updated_at)).to.greaterThan(
+          Date.parse(res.body.created_at),
+        );
+        expect(typeof Date.parse(res.body.opened_at)).to.eql('number');
+      });
+
+      it('should error out -- opened agreements cannot be updated', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement1Id}`)
+          .send({
+            listed: false,
+            description: 'new description',
+            capture_payment: '200',
+          })
+          .set('Accept', 'application/json')
+          .expect(422);
+
+        expect(res.body.message).eql(
+          'For open agreements, its status can either be set to "closed" or its listed flag updated',
+        );
+      });
+
+      it('should close an open agreement', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement1Id}`)
+          .send({ status: AGREEMENT_STATUS.closed })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...agreement1,
+          status: AGREEMENT_STATUS.closed,
+        });
+        expect(typeof Date.parse(res.body.closed_at)).to.eql('number');
+        expect(Date.parse(res.body.closed_at)).to.greaterThan(
+          Date.parse(res.body.opened_at),
+        );
+      });
+
+      it('should error out -- closed agreements can only be archived', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement1Id}`)
+          .send({ status: AGREEMENT_STATUS.open })
+          .set('Accept', 'application/json')
+          .expect(422);
+
+        expect(res.body.message).eql('Agreement can only be archived');
+      });
+
+      it('should archive a closed agreement', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement1Id}`)
+          .send({ listed: false })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...agreement1,
+          status: AGREEMENT_STATUS.closed,
+          listed: false,
+        });
+
+        const res2 = await request(app)
+          .get(`/agreement`)
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res2.body.agreements.length).to.eql(1);
+        expect(res2.body.count).to.eql(1);
+        expect(res2.body.agreements[0].listed).to.be.true;
+      });
+    });
+
+    describe('agreement2 flow -- planning, aborted', () => {
+      it('should abort a planned agreement', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement2.id}`)
+          .send({ status: AGREEMENT_STATUS.aborted })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...agreement2,
+          ...updates,
+          status: AGREEMENT_STATUS.aborted,
+        });
+
+        expect(typeof Date.parse(res.body.closed_at)).to.eql('number');
+        expect(Date.parse(res.body.closed_at)).to.greaterThan(
+          Date.parse(res.body.created_at),
+        );
+      });
+
+      it('should error out -- aborted agreements can only be archived', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement2.id}`)
+          .send({ status: AGREEMENT_STATUS.open })
+          .set('Accept', 'application/json')
+          .expect(422);
+
+        expect(res.body.message).eql('Agreement can only be archived');
+      });
+
+      it('should archive an aborted agreement', async () => {
+        const res = await request(app)
+          .patch(`/agreement/${agreement2.id}`)
+          .send({ listed: false })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body).includes({
+          ...agreement2,
+          ...updates,
+          status: AGREEMENT_STATUS.aborted,
+          listed: false,
+        });
+
+        const res2 = await request(app)
+          .get(`/agreement`)
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res2.body.agreements.length).to.eql(0);
+        expect(res2.body.count).to.eql(0);
+      });
+    });
+
+    describe('get archived resources', () => {
+      it('should get all archived resources if requested', async () => {
+        const res = await request(app)
+          .get(`/agreement`)
+          .query({ listed: false })
+          .set('Accept', 'application/json')
+          .expect(200);
+
+        expect(res.body.agreements.length).to.eql(2);
+        expect(res.body.count).to.eql(2);
+        expect(res.body.agreements[0].listed).to.be.false;
+      });
     });
   });
 });

@@ -69,80 +69,47 @@ class Contract {
       listed: Joi.boolean(),
     });
 
-    switch (contract.status) {
-      case 'unsigned': {
-        await Joi.object({
-          id: Joi.string().uuid().required(),
-          status: Joi.string().valid(
-            CONTRACT_STATUS.aborted,
-            CONTRACT_STATUS.signed,
-          ),
-          listed: Joi.boolean().when('status', {
-            is: CONTRACT_STATUS.signed,
-            then: Joi.forbidden(),
-          }),
-        })
-          .unknown(true)
-          .validateAsync(contractObject, {
-            abortEarly: true,
-            messages: {
-              '*': 'unsigned contracts can only be signed or aborted and cannot be archived when set to "signed"',
-            },
-          });
-
-        break;
-      }
-
-      case CONTRACT_STATUS.signed: {
-        await Joi.object({
-          id: Joi.string().uuid().required(),
-          status: Joi.string().valid(
-            CONTRACT_STATUS.completed,
-            CONTRACT_STATUS.cancelled,
-          ),
-        })
-          .unknown(false)
-          .validateAsync(contractObject, {
-            abortEarly: true,
-            messages: {
-              '*': 'Signed contracts cannot be updated except setting the status to "completed" or "cancelled"',
-            },
-          });
-        break;
-      }
-
-      case CONTRACT_STATUS.aborted: {
-        await archiveSchema.unknown(false).validateAsync(contractObject, {
+    if (contract.status === 'unsigned') {
+      await Joi.object({
+        id: Joi.string().uuid().required(),
+        status: Joi.string().valid(
+          CONTRACT_STATUS.aborted,
+          CONTRACT_STATUS.signed,
+        ),
+        listed: Joi.boolean().when('status', {
+          is: CONTRACT_STATUS.signed,
+          then: Joi.forbidden(),
+        }),
+      })
+        .unknown(true)
+        .validateAsync(contractObject, {
           abortEarly: true,
           messages: {
-            '*': 'Aborted contracts can only be archived',
+            '*': 'unsigned contracts can only be signed or aborted and cannot be archived when set to "signed"',
           },
         });
-        break;
-      }
-
-      case CONTRACT_STATUS.completed: {
-        await archiveSchema.unknown(false).validateAsync(contractObject, {
+    } else if (contract.status === CONTRACT_STATUS.signed) {
+      await Joi.object({
+        id: Joi.string().uuid().required(),
+        status: Joi.string().valid(
+          CONTRACT_STATUS.completed,
+          CONTRACT_STATUS.cancelled,
+        ),
+      })
+        .unknown(false)
+        .validateAsync(contractObject, {
           abortEarly: true,
           messages: {
-            '*': 'Completed contracts can only be archived',
+            '*': 'Signed contracts cannot be updated except setting the status to "completed" or "cancelled"',
           },
         });
-        break;
-      }
-
-      case CONTRACT_STATUS.cancelled: {
-        await archiveSchema.unknown(false).validateAsync(contractObject, {
-          abortEarly: true,
-          messages: {
-            '*': 'Cancelled contracts can only be archived',
-          },
-        });
-        break;
-      }
-
-      default:
-        break;
+    } else {
+      await archiveSchema.unknown(false).validateAsync(contractObject, {
+        abortEarly: true,
+        messages: {
+          '*': 'Contract can only be archived',
+        },
+      });
     }
 
     const modifiedcontractObject = {

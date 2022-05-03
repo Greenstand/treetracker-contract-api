@@ -64,7 +64,7 @@ class Agreement {
 
   async getAgreements(filter, limitOptions) {
     const agreements = await this._agreementRepository.getByFilter(
-      { ...filter },
+      { listed: true, ...filter },
       limitOptions,
     );
 
@@ -72,7 +72,7 @@ class Agreement {
   }
 
   async getAgreementsCount(filter) {
-    return this._agreementRepository.countByFilter(filter);
+    return this._agreementRepository.countByFilter({ listed: true, ...filter });
   }
 
   async getAgreementById(agreementId) {
@@ -87,14 +87,35 @@ class Agreement {
       ...(agreementObject.status === AGREEMENT_STATUS.open && {
         opened_at: new Date().toISOString(),
       }),
-      ...(agreementObject.status === AGREEMENT_STATUS.closed && {
+      ...([AGREEMENT_STATUS.closed, AGREEMENT_STATUS.aborted].includes(
+        agreementObject.status,
+      ) && {
         closed_at: new Date().toISOString(),
       }),
     };
 
     // check to see if agreement is open
     const agreement = await this.getAgreementById(agreementObject.id);
-    if (agreement.status === AGREEMENT_STATUS.open) {
+    if (agreement.status === 'planning') {
+      await Joi.object({
+        id: Joi.string().uuid().required(),
+        status: Joi.string().valid(
+          AGREEMENT_STATUS.open,
+          AGREEMENT_STATUS.aborted,
+        ),
+        listed: Joi.boolean().when('status', {
+          is: AGREEMENT_STATUS.open,
+          then: Joi.forbidden(),
+        }),
+      })
+        .unknown(true)
+        .validateAsync(agreementObject, {
+          abortEarly: true,
+          messages: {
+            '*': 'agreements in planning state can only be opened or aborted and cannot be archived when set to "open"',
+          },
+        });
+    } else if (agreement.status === AGREEMENT_STATUS.open) {
       await Joi.object({
         id: Joi.string().uuid().required(),
         status: Joi.string().valid(AGREEMENT_STATUS.closed),
@@ -104,14 +125,21 @@ class Agreement {
         .validateAsync(agreementObject, {
           abortEarly: true,
           messages: {
-            '*': 'For open agreements, its status can either be set to close or its listed flag updated',
+            '*': 'For open agreements, its status can either be set to "closed" or its listed flag updated',
           },
         });
-
-      const updatedObject = await this._agreementRepository.update(
-        modifiedAgreementObject,
-      );
-      return this._response(updatedObject);
+    } else {
+      await Joi.object({
+        id: Joi.string().uuid().required(),
+        listed: Joi.boolean(),
+      })
+        .unknown(false)
+        .validateAsync(agreementObject, {
+          abortEarly: true,
+          messages: {
+            '*': 'Agreement can only be archived',
+          },
+        });
     }
 
     const updatedObject = await this._agreementRepository.update(

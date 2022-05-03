@@ -19,7 +19,7 @@ const contract3 = require('./mock/contract/contract3');
 const databaseCleaner = require('../database/seeds/00_job_database_cleaner');
 const { CONTRACT_STATUS } = require('../server/utils/enums');
 
-describe.only('/contract', () => {
+describe('/contract', () => {
   before(async function () {
     await knex('consolidation_rule').insert(consolidationRule);
     await knex('species_agreement').insert(speciesAgreement);
@@ -84,6 +84,10 @@ describe.only('/contract', () => {
   });
 
   describe('UPDATE', () => {
+    const updates = {
+      notes: 'notes updated',
+    };
+
     it('should error out -- unsigned contracts cannot be archived and set to signed', async () => {
       const res = await request(app)
         .patch(`/contract/${contract2.id}`)
@@ -108,6 +112,22 @@ describe.only('/contract', () => {
       );
     });
 
+    it('should update an unsigned contract', async () => {
+      const res = await request(app)
+        .patch(`/contract/${contract2.id}`)
+        .send(updates)
+        .set('Accept', 'application/json')
+        .expect(200);
+
+      expect(res.body).includes({
+        ...contract2,
+        ...updates,
+      });
+      expect(Date.parse(res.body.updated_at)).to.greaterThan(
+        Date.parse(res.body.created_at),
+      );
+    });
+
     describe('contract2 flow -- unsigned, signed, completed, archived', () => {
       it('should update status to signed', async () => {
         const res = await request(app)
@@ -118,6 +138,7 @@ describe.only('/contract', () => {
 
         expect(res.body).includes({
           ...contract2,
+          ...updates,
           status: CONTRACT_STATUS.signed,
         });
         expect(Date.parse(res.body.updated_at)).to.greaterThan(
@@ -147,6 +168,7 @@ describe.only('/contract', () => {
 
         expect(res.body).includes({
           ...contract2,
+          ...updates,
           status: CONTRACT_STATUS.completed,
         });
         expect(typeof Date.parse(res.body.closed_at)).to.eql('number');
@@ -162,9 +184,7 @@ describe.only('/contract', () => {
           .set('Accept', 'application/json')
           .expect(422);
 
-        expect(res.body.message).eql(
-          'Completed contracts can only be archived',
-        );
+        expect(res.body.message).eql('Contract can only be archived');
       });
 
       it('should archive a completed contract', async () => {
@@ -176,6 +196,7 @@ describe.only('/contract', () => {
 
         expect(res.body).includes({
           ...contract2,
+          ...updates,
           status: CONTRACT_STATUS.completed,
           listed: false,
         });
@@ -223,9 +244,7 @@ describe.only('/contract', () => {
           .set('Accept', 'application/json')
           .expect(422);
 
-        expect(res.body.message).eql(
-          'Cancelled contracts can only be archived',
-        );
+        expect(res.body.message).eql('Contract can only be archived');
       });
 
       it('should archive a cancelled contract', async () => {
@@ -277,7 +296,7 @@ describe.only('/contract', () => {
           .set('Accept', 'application/json')
           .expect(422);
 
-        expect(res.body.message).eql('Aborted contracts can only be archived');
+        expect(res.body.message).eql('Contract can only be archived');
       });
 
       it('should archive an aborted contract', async () => {
