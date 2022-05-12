@@ -10,7 +10,7 @@ const { COORDINATOR_ROLES } = require('../utils/enums');
 const coordinatorPostSchema = Joi.object({
   stakeholder_id: Joi.string().uuid().required(),
   coordinator_team_id: Joi.string().uuid().required(),
-  coordinator_id: Joi.string().uuid(),
+  reports_to_coordinator_id: Joi.string().uuid(),
   role: Joi.string()
     .required()
     .valid(...Object.values(COORDINATOR_ROLES)),
@@ -21,7 +21,7 @@ const coordinatorGetQuerySchema = Joi.object({
   limit: Joi.number().integer().greater(0),
   coordinator_team_id: Joi.string().uuid(),
   stakeholder_id: Joi.string().uuid(),
-  coordinator_id: Joi.string().uuid(),
+  reports_to_coordinator_id: Joi.string().uuid(),
 }).unknown(false);
 
 const coordinatorPatchSchema = Joi.object({
