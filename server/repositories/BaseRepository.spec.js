@@ -1,122 +1,276 @@
-const expect = require('expect-runtime');
-const HttpError = require('../utils/HttpError');
+const { expect } = require('chai');
+const mockKnex = require('mock-knex');
+const knex = require('../infra/database/knex');
 
-class BaseRepository {
-  constructor(tableName, session) {
-    expect(tableName).defined();
-    this._tableName = tableName;
-    this._session = session;
-  }
+const tracker = mockKnex.getTracker();
+const BaseRepository = require('./BaseRepository');
+const Session = require('../infra/database/Session');
 
-  async getById(id) {
-    const object = await this._session
-      .getDB()
-      .select()
-      .table(this._tableName)
-      .where('id', id)
-      .first();
-    if (!object) {
-      throw new HttpError(404, `Can not found ${this._tableName} by id:${id}`);
-    }
-    return object;
-  }
+describe('BaseRepository', () => {
+  let baseRepository;
 
-  /*
-   * select by filter
-   * support: and / or
-   * options:
-   *  limit: number
-   */
-  async getByFilter(filter, options) {
-    const whereBuilder = function (object, builder) {
-      let result = builder;
-      if (object.and) {
-        expect(Object.keys(object)).lengthOf(1);
-        expect(object.and).a(expect.any(Array));
-        object.and.forEach( one => {
-          if (one.or) {
-            result = result.andWhere((subBuilder) =>
-              whereBuilder(one, subBuilder),
-            );
-          } else {
-            expect(Object.keys(one)).lengthOf(1);
-            result = result.andWhere(
-              Object.keys(one)[0],
-              Object.values(one)[0],
-            );
-          }
+  beforeEach(() => {
+    mockKnex.mock(knex);
+    tracker.install();
+    const session = new Session();
+    baseRepository = new BaseRepository('testTable', session);
+  });
+
+  afterEach(() => {
+    tracker.uninstall();
+    mockKnex.unmock(knex);
+  });
+
+  it('getById', async () => {
+    tracker.uninstall();
+    tracker.install();
+    tracker.on('query', (query) => {
+      expect(query.sql).match(/select.*testTable.*/);
+      query.response([{ id: 1 }]);
+    });
+    const entity = await baseRepository.getById(1);
+    expect(entity).property('id').eq(1);
+  });
+
+  // TODO
+  it.skip('getById can not find result, should throw 404', () => {});
+
+  describe.only('getByFilter', () => {
+    it('getByFilter', async () => {
+      tracker.uninstall();
+      tracker.install();
+      tracker.on('query', (query) => {
+        expect(query.sql).match(/select.*testTable.*name.*/);
+        query.response([{ id: 1 }]);
+      });
+      const result = await baseRepository.getByFilter({
+        name: 'testName',
+      });
+      expect(result).lengthOf(1);
+      expect(result[0]).property('id').eq(1);
+    });
+
+    it('getByFilter with limit', async () => {
+      tracker.uninstall();
+      tracker.install();
+      tracker.on('query', (query) => {
+        expect(query.sql).match(/select.*testTable.*limit.*/);
+        query.response([{ id: 1 }]);
+      });
+      const result = await baseRepository.getByFilter(
+        {
+          name: 'testName',
+        },
+        {
+          limit: 1,
+        },
+      );
+      expect(result).lengthOf(1);
+      expect(result[0]).property('id').eq(1);
+    });
+
+    describe("'and' 'or' phrase", () => {
+      it('{and: [{c:1}, {b:2}]}', async () => {
+        tracker.uninstall();
+        tracker.install();
+        tracker.on('query', (query) => {
+          expect(query.sql).match(
+            /select.*testTable.*where.*c1.*=.*and.*c2.*=.*/,
+          );
+          query.response([{ id: 1 }]);
         });
-      } else if (object.or) {
-        expect(Object.keys(object)).lengthOf(1);
-        expect(object.or).a(expect.any(Array));
-        object.or.forEach( one => {
-          if (one.and) {
-            result = result.orWhere((subBuilder) =>
-              whereBuilder(one, subBuilder),
-            );
-          } else {
-            expect(Object.keys(one)).lengthOf(1);
-            result = result.orWhere(Object.keys(one)[0], Object.values(one)[0]);
-          }
+        const result = await baseRepository.getByFilter({
+          and: [
+            {
+              c1: 1,
+            },
+            {
+              c2: 2,
+            },
+          ],
         });
-      } else {
-        result.where(object);
-      }
-      return result;
-    };
-    let promise = this._session
-      .getDB()
-      .select()
-      .table(this._tableName)
-      .where((builder) => whereBuilder(filter, builder));
-    if (options && options.limit) {
-      promise = promise.limit(options && options.limit);
-    }
-    const result = await promise;
-    expect(result).a(expect.any(Array));
-    return result;
-  }
+        expect(result).lengthOf(1);
+        expect(result[0]).property('id').eq(1);
+      });
 
-  async countByFilter(filter) {
-    const result = await this._session
-      .getDB()
-      .count()
-      .table(this._tableName)
-      .where(filter);
-    expect(result).match([
-      {
-        count: expect.any(String),
-      },
-    ]);
-    return parseInt(result[0].count);
-  }
+      it('{or: [{c:1}, {b:2}]}', async () => {
+        tracker.uninstall();
+        tracker.install();
+        tracker.on('query', (query) => {
+          expect(query.sql).match(
+            /select.*testTable.*where.*c1.*=.*or.*c2.*=.*/,
+          );
+          query.response([{ id: 1 }]);
+        });
+        const result = await baseRepository.getByFilter({
+          or: [
+            {
+              c1: 1,
+            },
+            {
+              c2: 2,
+            },
+          ],
+        });
+        expect(result).lengthOf(1);
+        expect(result[0]).property('id').eq(1);
+      });
 
-  async update(object) {
-    const result = await this._session
-      .getDB()(this._tableName)
-      .update(object)
-      .where('id', object.id)
-      .returning('*');
-    expect(result).match([
-      {
-        id: expect.any(Number),
-      },
-    ]);
-    return result[0];
-  }
+      it('{and: [{c:1}, {b:2}, {or: [{d:1}, {e:1}]]}', async () => {
+        tracker.uninstall();
+        tracker.install();
+        tracker.on('query', (query) => {
+          expect(query.sql).match(
+            /select.*testTable.*where.*c1.*=.*and.*c2.*=.*and.*c3.*or.*c4.*/,
+          );
+          query.response([{ id: 1 }]);
+        });
+        const result = await baseRepository.getByFilter({
+          and: [
+            {
+              c1: 1,
+            },
+            {
+              c2: 2,
+            },
+            {
+              or: [
+                {
+                  c3: 1,
+                },
+                {
+                  c4: 1,
+                },
+              ],
+            },
+          ],
+        });
+        expect(result).lengthOf(1);
+        expect(result[0]).property('id').eq(1);
+      });
 
-  async create(object) {
-    const result = await this._session
-      .getDB()(this._tableName)
-      .insert(object)
-      .returning('*');
-    expect(result).match([
-      {
-        id: expect.anything(),
-      },
-    ]);
-    return result[0];
-  }
-}
+      it('{or: [{c:1}, {b:2}, {and: [{d:1}, {e:1}]]}', async () => {
+        tracker.uninstall();
+        tracker.install();
+        tracker.on('query', (query) => {
+          expect(query.sql).match(
+            /select.*testTable.*where.*c1.*=.*or.*c2.*=.*or.*c3.*and.*c4.*/,
+          );
+          query.response([{ id: 1 }]);
+        });
+        const result = await baseRepository.getByFilter({
+          or: [
+            {
+              c1: 1,
+            },
+            {
+              c2: 2,
+            },
+            {
+              and: [
+                {
+                  c3: 1,
+                },
+                {
+                  c4: 1,
+                },
+              ],
+            },
+          ],
+        });
+        expect(result).lengthOf(1);
+        expect(result[0]).property('id').eq(1);
+      });
 
-module.exports = BaseRepository;
+      it('(a=1 and b =2) or (a=2 and b=1)', async () => {
+        tracker.uninstall();
+        tracker.install();
+        tracker.on('query', (query) => {
+          expect(query.sql).match(
+            /select.*testTable.*where.*c3.*=.*and.*c4.*=.*or.*c3.*and.*c4.*/,
+          );
+          query.response([{ id: 1 }]);
+        });
+        const result = await baseRepository.getByFilter({
+          or: [
+            {
+              and: [
+                {
+                  c3: 1,
+                },
+                {
+                  c4: 2,
+                },
+              ],
+            },
+            {
+              and: [
+                {
+                  c3: 2,
+                },
+                {
+                  c4: 1,
+                },
+              ],
+            },
+          ],
+        });
+        expect(result).lengthOf(1);
+        expect(result[0]).property('id').eq(1);
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('update', async () => {
+      tracker.uninstall();
+      tracker.install();
+      tracker.on('query', (query) => {
+        expect(query.sql).match(/update.*testTable.*/);
+        query.response({ id: 1 });
+      });
+      const result = await baseRepository.update({
+        id: 1,
+        name: 'testName',
+      });
+      expect(result).property('id').eq(1);
+    });
+  });
+
+  describe('create', () => {
+    it('create', async () => {
+      tracker.uninstall();
+      tracker.install();
+      tracker.on('query', (query) => {
+        expect(query.sql).match(/insert.*testTable.*returning.*/);
+        query.response([{ id: 1 }]);
+      });
+      const result = await baseRepository.create({
+        name: 'testName',
+      });
+      expect(result).property('id').eq(1);
+    });
+  });
+
+  describe('countByFilter', () => {
+    it('successfully', async () => {
+      tracker.uninstall();
+      tracker.install();
+      tracker.on('query', (query) => {
+        expect(query.sql).match(/.*count.*column.*/);
+        query.response([
+          {
+            count: '1',
+          },
+        ]);
+      });
+      const result = await baseRepository.countByFilter({
+        column: 'testColumn',
+      });
+      expect(result).eq(1);
+    });
+
+    // TODO
+    describe.skip('count support and and or', () => {});
+  });
+});
