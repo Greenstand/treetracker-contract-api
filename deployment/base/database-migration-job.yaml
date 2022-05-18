@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: database-migration-job
+  namespace: treetracker-contract-api
 spec:
   backoffLimit: 1 # allow for one re-try of the migration
   template:
@@ -17,7 +18,7 @@ spec:
                 - microservices-node-pool
       containers:
       - name: migration
-        image: greenstand/treetracker-api:TAG
+        image: greenstand/treetracker-contract-api:TAG
         env:
           - name: DATABASE_URL
             valueFrom:
