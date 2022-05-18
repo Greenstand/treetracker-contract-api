@@ -117,7 +117,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -am "chore: Bump docker image tag ${{ needs.release.outputs.bumped_version }} [skip ci]"
+          git commit -am "chore: bump docker image tag ${{ needs.release.outputs.bumped_version }} [skip ci]"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
