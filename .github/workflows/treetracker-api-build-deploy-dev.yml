@@ -31,7 +31,8 @@ jobs:
           --health-retries 5
     
     if: |
-      !contains(github.event.head_commit.message, 'skip-ci')
+      !contains(github.event.head_commit.message, 'skip-ci') &&
+      !contains(github.event.head_commit.message, 'Bump docker image tag')
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 16.x
@@ -112,7 +113,7 @@ jobs:
         run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
 
       - name: Run kustomize
-        run: (cd deployment/overlays/development && ../../kustomize edit set image greenstand/${{ github.event.repository.name }}:${{ needs.release.outputs.bumped_version }} )
+        run: (cd deployment/overlays/development && ../../../kustomize edit set image greenstand/${{ github.event.repository.name }}:${{ needs.release.outputs.bumped_version }} )
 
       - name: Commit dev kustomization file with new app version
         run: |
