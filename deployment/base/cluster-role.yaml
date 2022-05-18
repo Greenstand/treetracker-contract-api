@@ -2,6 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: k8s-wait-for
+  namespace: treetracker-contract-api
 rules:
 - apiGroups: [""]
   resources: ["services","pods","jobs"]

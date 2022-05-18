@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: SERVICE
+  name: treetracker-contract-api
   labels:
-    app: SERVICE 
+    app: treetracker-contract-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: SERVICE
+      app: treetracker-contract-api
   template:
     metadata:
       labels:
-        app: SERVICE
+        app: treetracker-contract-api
     spec:
       affinity:
         nodeAffinity:
@@ -24,8 +24,8 @@ spec:
                 values:
                 - microservices-node-pool
       containers:
-      - name: SERVICE
-        image: greenstand/SERVICE:TAG
+      - name: treetracker-contract-api
+        image: greenstand/treetracker-contract-api:latest
         ports:
         - containerPort: 80
         env:
@@ -35,6 +35,6 @@ spec:
                 name: database-connection
                 key: db
           - name: DATABASE_SCHEMA
-            value: messaging
+            value: contract
       imagePullSecrets:
         - name: greenstand-docker-secret
