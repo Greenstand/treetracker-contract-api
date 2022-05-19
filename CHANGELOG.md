@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.0...v1.0.1) (2022-05-19)
+
+
+### Bug Fixes
+
+* update env schema ([ea4894b](https://github.com/Greenstand/treetracker-contract-api/commit/ea4894b721fe482225a949f36f7d2f486762f89a))
+
 # 1.0.0 (2022-05-18)
 
 
