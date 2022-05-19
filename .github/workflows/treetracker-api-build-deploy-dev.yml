@@ -44,11 +44,23 @@ jobs:
       - name: run ESLint
         run: npm run lint
         working-directory: ${{ env.project-directory }}
-      - name: run api tests
-        run: npm run test
+      - name: run db-migrate
+        run: npm run db-migrate-ci
         working-directory: ${{ env.project-directory }}
         env:
           DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
+      - name: run integration tests
+        run: npm run test-integration
+        working-directory: ${{ env.project-directory }}
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
+          CI: true
+      - name: run repository tests
+        run: npm run test-repository
+        working-directory: ${{ env.project-directory }}
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@postgres/postgres
+          CI: true
 
   release:
     name: Release
