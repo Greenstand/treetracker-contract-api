@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.1...v1.0.2) (2022-05-19)
+
+
+### Bug Fixes
+
+* fix github workflow file ([48789e5](https://github.com/Greenstand/treetracker-contract-api/commit/48789e5c08141716a4ccd98dfc747a49c3577f84))
+
 ## [1.0.1](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.0...v1.0.1) (2022-05-19)
 
 
