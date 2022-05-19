@@ -35,6 +35,6 @@ spec:
                 name: database-connection
                 key: db
           - name: DATABASE_SCHEMA
-            value: contract
+            value: contracts
       imagePullSecrets:
         - name: greenstand-docker-secret
