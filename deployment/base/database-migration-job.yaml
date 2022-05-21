@@ -3,6 +3,9 @@ kind: Job
 metadata:
   name: database-migration-job
   namespace: treetracker-contract-api
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   backoffLimit: 1 # allow for one re-try of the migration
   template:
