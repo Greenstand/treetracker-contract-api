@@ -3,6 +3,9 @@ kind: ClusterRole
 metadata:
   name: k8s-wait-for
   namespace: treetracker-contract-api
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 rules:
 - apiGroups: [""]
   resources: ["services","pods","jobs"]
