@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.2...v1.0.3) (2022-07-10)
+
+
+### Bug Fixes
+
+* reduce max pool ([e0f8079](https://github.com/Greenstand/treetracker-contract-api/commit/e0f8079607607eb0cf71d9fbc250f69ebc782477))
+
 ## [1.0.2](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.1...v1.0.2) (2022-05-19)
 
 
