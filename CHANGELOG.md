@@ -1,3 +1,11 @@
+## [1.0.4](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.3...v1.0.4) (2023-02-28)
+
+
+### Bug Fixes
+
+* node dependency for semantic-release ([5e412cb](https://github.com/Greenstand/treetracker-contract-api/commit/5e412cbdad3114d2e406d4f48859d9cc0fb5948b))
+* node dependency for semantic-release ([a6e0fcd](https://github.com/Greenstand/treetracker-contract-api/commit/a6e0fcd7c71ec86304721967d4998bdba81ee03a))
+
 ## [1.0.3](https://github.com/Greenstand/treetracker-contract-api/compare/v1.0.2...v1.0.3) (2022-07-10)
 
 
