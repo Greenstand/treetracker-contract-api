@@ -36,6 +36,11 @@ const agreementGetQuerySchema = Joi.object({
   name: Joi.string(),
   listed: Joi.boolean(),
   consolidation_rule_id: Joi.string().uuid(),
+  type: Joi.string(),
+  status: Joi.string(),
+  funder_id: Joi.string().uuid(),
+  growing_organization_id: Joi.string().uuid(),
+  species_agreement_id: Joi.string().uuid(),
 }).unknown(false);
 
 const agreementIdParamSchema = Joi.object({
